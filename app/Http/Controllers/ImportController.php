@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\Product;
-use App\Product_characteristic;
+use App\ProductCharacteristic;
+use App\ProductMaker;
 use App\Traits\ConverterTrait;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,7 @@ class ImportController extends Controller
         if (is_null($this->Tires) OR is_null($this->Drives)) self::errorResponse('null categories');
 
     }
-    
+
     public function import()
     {
 
@@ -40,23 +41,22 @@ class ImportController extends Controller
 
     }
 
-   public function importHandler($Category, $nameCategory) {
+   public function importHandler(array $Category, $nameCategory) {
 
        $CategoryArray = $Category;
-       $uuidCategory = Category::createCategory($nameCategory, $this->slug($nameCategory));
+       $uuidCategory = ProductMaker::createCategory($nameCategory, $this->slug($nameCategory));
 
        $counter = 0;
-       while ($counter !== 100)
+       while (++$counter < 100)
        {
 
            $name = $this->valueGenerate($CategoryArray,'Brands').' '.$this->valueGenerate($CategoryArray,'Models');
-           $uuidProduct = Product::createProduct($name, $this->slug($name),  $uuidCategory);
+           $uuidProduct = ProductMaker::createProduct($name, $this->slug($name),  $uuidCategory);
 
           if (isset($CategoryArray['Characteristics']))
-              Product_characteristic::addCharacteristicInProduct($CategoryArray['Characteristics'], $uuidProduct);
+              ProductMaker::addCharacteristicInProduct($CategoryArray['Characteristics'], $uuidProduct);
           else return self::errorResponse('no Characteristics');
 
-           $counter += 1;
        }
 
        return 'success';
