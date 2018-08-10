@@ -12,29 +12,25 @@ class ImportController extends Controller
 
     use ConverterTrait;
 
-    protected $Tires = NULL;
-    protected $Drives = NULL;
+    protected $categories;
 
     public function __construct(Request $request)
     {
-        if (!is_null($request->Tires)) $this->Tires = ['name' => 'Tires', 'object' => $request->Tires];
-        if (!is_null($request->Drives)) $this->Drives = ['name' => 'Drives', 'object' => $request->Drives];
 
-        if (empty($this->Tires) OR empty($this->Drives)) self::errorResponse('null categories');
+        foreach ($request->all() as $key => $value) {
+            $this->categories[] = ['name' => $key, 'object' => $value];
+        }
 
     }
 
     public function import()
     {
 
-        if (!is_null($this->Tires)) $resultTires = $this->importHandler($this->Tires['object'], $this->Tires['name']);
-        else $resultTires = 'success';
+        foreach ($this->categories as $cat) {
+            $this->importHandler($cat['object'], $cat['name']);
+        }
 
-        if ($resultTires == 'success' && !is_null($this->Drives))
-            $resultDrivers = $this->importHandler($this->Drives['object'], $this->Drives['name']);
-        else $resultDrivers = 'success';
-
-        return self::successResponse($resultDrivers);
+        return self::successResponse('success');
 
     }
 
@@ -42,13 +38,13 @@ class ImportController extends Controller
     {
 
         $CategoryArray = $Category;
-        $uuidCategory = ProductMaker::createCategory($nameCategory, $this->slug($nameCategory));
+        $uuidCategory = ProductMaker::createCategory($nameCategory, str_slug($nameCategory));
 
         $counter = 0;
-        while (++$counter < 100){
+        while (++$counter < 5){
 
             $name = $this->valueGenerate($CategoryArray, 'Brands') . ' ' . $this->valueGenerate($CategoryArray, 'Models');
-            $uuidProduct = ProductMaker::createProduct($name, $this->slug($name), $uuidCategory);
+            $uuidProduct = ProductMaker::createProduct($name, str_slug($name), $uuidCategory);
 
             if (isset($CategoryArray['Characteristics']))
                 ProductMaker::addCharacteristicInProduct($CategoryArray['Characteristics'], $uuidProduct);
@@ -56,7 +52,6 @@ class ImportController extends Controller
 
         }
 
-        return 'success';
     }
 
 

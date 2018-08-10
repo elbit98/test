@@ -12,12 +12,8 @@ namespace App\Traits;
 trait ConverterTrait
 {
 
-    public function slug($data) {
-        return str_replace(' ', '-', mb_strtolower($data));
-    }
 
     public function valueGenerate($data, $name) {
-
 
       if(!array_key_exists($name, $data))
           return response()->json(['success' => false, 'data' => 'no array key'.$name], 406);

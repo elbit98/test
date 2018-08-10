@@ -41,11 +41,11 @@ class ProductMaker
 
             if (is_null($Characteristic)) $Characteristic = Characteristic::create(['name' => $key, 'slug' => $key]);
 
-            ProductCharacteristic::create([
-                'characteristic_id' => $Characteristic->id,
-                'product_uuid' => $uuidProduct,
-                'value' => $value[array_rand($value, 1)],
-            ]);
+            $ProductCharacteristic = new ProductCharacteristic();
+            $ProductCharacteristic->characteristic_id = $Characteristic->id;
+            $ProductCharacteristic->product_uuid = $uuidProduct;
+            $ProductCharacteristic->value = $value[array_rand($value, 1)];
+            $ProductCharacteristic->save();
 
         }
     }
