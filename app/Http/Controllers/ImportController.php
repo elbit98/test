@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Category;
-use App\Product;
-use App\ProductCharacteristic;
 use App\ProductMaker;
 use App\Traits\ConverterTrait;
 use Illuminate\Http\Request;
