@@ -20,7 +20,7 @@ class ImportController extends Controller
         if (!is_null($request->Tires)) $this->Tires = ['name' => 'Tires', 'object' => $request->Tires];
         if (!is_null($request->Drives)) $this->Drives = ['name' => 'Drives', 'object' => $request->Drives];
 
-        if (is_null($this->Tires) OR is_null($this->Drives)) self::errorResponse('null categories');
+        if (empty($this->Tires) OR empty($this->Drives)) self::errorResponse('null categories');
 
     }
 
