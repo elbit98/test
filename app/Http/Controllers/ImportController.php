@@ -14,20 +14,13 @@ class ImportController extends Controller
 
     protected $categories;
 
-    public function __construct(Request $request)
+
+    public function import(Request $request)
     {
 
         foreach ($request->all() as $key => $value) {
-            $this->categories[] = ['name' => $key, 'object' => $value];
-        }
+            $this->importHandler($value, $key);
 
-    }
-
-    public function import()
-    {
-
-        foreach ($this->categories as $cat) {
-            $this->importHandler($cat['object'], $cat['name']);
         }
 
         return self::successResponse('success');
