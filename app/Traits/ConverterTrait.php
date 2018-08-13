@@ -12,13 +12,9 @@ namespace App\Traits;
 trait ConverterTrait
 {
 
+    public static function valueGenerate($data) {
 
-    public function valueGenerate($data, $name) {
-
-      if(!array_key_exists($name, $data))
-          return response()->json(['success' => false, 'data' => 'no array key'.$name], 406);
-     else
-        return $data['Brands'][array_rand($data['Brands'], 1)];
+        return $data[array_rand($data, 1)];
 
     }
 
