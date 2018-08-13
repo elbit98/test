@@ -53,14 +53,10 @@ class ProductMaker
             if (is_null($Characteristic)) $Characteristic = Characteristic::create(['name' => $key, 'slug' => $key]);
 
             $product = Product::where('uuid', $uuidProduct)->first();
-            $characteristic = Characteristic::find($Characteristic->id);
 
                $val = $Characteristic::handler($value);
 
-
-            if (array_key_exists('start', $value))   dd($val);
-
-            $product->characteristic()->save($characteristic, ['value' => 'effe']);
+            $product->characteristic()->save($Characteristic, ['value' => $val]);
 
         }
 
