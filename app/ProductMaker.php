@@ -52,8 +52,7 @@ class ProductMaker
             $Characteristic = Characteristic::where('name', $key)->first();
             if (is_null($Characteristic)) $Characteristic = Characteristic::create(['name' => $key, 'slug' => $key]);
 
-            $product = Product::where('uuid', $uuidProduct)->first();
-            $characteristic = Characteristic::find($Characteristic->id);
+
             if (array_key_exists('start', $value)) {
                 $is = range($value['start'], $value['end'], $value['step']);
                 $val = $is[array_rand($is , 1)];
@@ -61,11 +60,9 @@ class ProductMaker
                 $val = $value[array_rand($value, 1)];
             }
 
-            if (array_key_exists('start', $value)) {
+            $product = Product::where('uuid', $uuidProduct)->first();
 
-            }
-
-            $product->characteristic()->save($characteristic, ['value' => $val]);
+            $product->characteristic()->save($Characteristic->id, ['value' => $val]);
 
         }
 
