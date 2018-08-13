@@ -16,8 +16,7 @@ class CreateProductCharacteristicsTable extends Migration
         Schema::create('product_characteristics', function (Blueprint $table) {
             $table->string('characteristic_id');
             $table->string('product_uuid');
-            $table->string('value');
-            $table->timestamps();
+            $table->string('value')->default('fefwef');
         });
     }
 

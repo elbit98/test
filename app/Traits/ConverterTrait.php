@@ -18,7 +18,7 @@ trait ConverterTrait
       if(!array_key_exists($name, $data))
           return response()->json(['success' => false, 'data' => 'no array key'.$name], 406);
      else
-        return $data[$name][array_rand($data[$name], 1)];
+        return $data['Brands'][array_rand($data['Brands'], 1)];
 
     }
 

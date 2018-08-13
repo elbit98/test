@@ -3,51 +3,72 @@
 namespace App;
 
 use Illuminate\Support\Str;
+use App\Traits\ConverterTrait;
 
 class ProductMaker
 {
-    public static function createCategory($name, $slug) {
 
-        $category = new Category();
-        $category->name = $name;
-        $category->uuid = Str::uuid(10);
-        $category->slug = $slug;
-        $category->save();
+    use ConverterTrait;
 
-        return $category->uuid;
+    protected $category;
+    protected $characteristics;
 
+    public function __construct($category)
+    {
+        $this->category = $category;
+        $this->characteristics = $category['Characteristics'];
     }
 
-    public static function createProduct($name, $slug, $uuidCategory) {
-
-        $product = new Product();
-        $product->name = $name;
-        $product->uuid = Str::uuid(10);
-        $product->slug = $slug;
-        $product->category_uuid = $uuidCategory;
-        $product->price = mt_rand(100,999);
-
-        $product->save();
-
-        return $product->uuid;
-
+    public function makeCategory($name) {
+        return Category::create($name);
     }
 
-    public static function addCharacteristicInProduct($Characteristics, $uuidProduct) {
+    public function makeProduct($uuidCategory) {
 
-        foreach ($Characteristics as $key => $value) {
+        $counter = 0;
+        while ($counter++ < 5){
 
-            $Characteristic = Characteristic::where('name', $key)->first();
+            $category = Category::where('uuid', $uuidCategory)->first();
+            $product = new Product([
+                'name' => Product::nameGenerate($this->category),
+                'uuid' => Str::uuid(10),
+                'slug' => str_slug(Product::nameGenerate($this->category)),
+                'price' => mt_rand(100, 999)
+            ]);
 
-            if (is_null($Characteristic)) $Characteristic = Characteristic::create(['name' => $key, 'slug' => $key]);
+            $category->products()->save($product);
 
-            $ProductCharacteristic = new ProductCharacteristic();
-            $ProductCharacteristic->characteristic_id = $Characteristic->id;
-            $ProductCharacteristic->product_uuid = $uuidProduct;
-            $ProductCharacteristic->value = $value[array_rand($value, 1)];
-            $ProductCharacteristic->save();
+            $this->addCharacteristic($product->uuid);
 
         }
+
+    }
+
+    public function addCharacteristic($uuidProduct)
+    {
+
+        foreach ($this->characteristics as $key => $value) {
+
+            $Characteristic = Characteristic::where('name', $key)->first();
+            if (is_null($Characteristic)) $Characteristic = Characteristic::create(['name' => $key, 'slug' => $key]);
+
+            $product = Product::where('uuid', $uuidProduct)->first();
+            $characteristic = Characteristic::find($Characteristic->id);
+            if (array_key_exists('start', $value)) {
+                $is = range($value['start'], $value['end'], $value['step']);
+                $val = $is[array_rand($is , 1)];
+            } else {
+                $val = $value[array_rand($value, 1)];
+            }
+
+            if (array_key_exists('start', $value)) {
+
+            }
+
+            $product->characteristic()->save($characteristic, ['value' => $val]);
+
+        }
+
     }
 
 }
